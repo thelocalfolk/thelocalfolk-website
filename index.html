@@ -489,12 +489,13 @@
     }, { passive: true });
 
     rightPanel.addEventListener('touchmove', (e) => {
+      e.preventDefault();
       const y     = e.touches[0].clientY;
       const delta = touchLastY - y;   // drag up = positive = scroll down
       pos        += delta;
       applyPos();
       touchLastY  = y;
-    }, { passive: true });
+    }, { passive: false });
 
     rightPanel.addEventListener('touchend', () => {
       resumeTimer = setTimeout(() => { paused = false; }, 2500);
