@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — The Local Folk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: #3E361F;
+      color: #fff;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* ── PAGE WRAPPER ──────────────────────────────────────────── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 32px 36px 36px;
+    }
+
+    /* ── NAV ───────────────────────────────────────────────────── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 80px;
+    }
+    .nav__logo {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 12px;
+      color: #fff;
+      letter-spacing: 0;
+      cursor: default;
+      text-decoration: none;
+    }
+    .nav-menu {
+      position: relative;
+    }
+    .nav-menu__trigger {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      color: #fff;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: block;
+      text-align: right;
+    }
+    .nav-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-5px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      text-align: right;
+    }
+    .nav-menu:hover .nav-dropdown,
+    .nav-menu--open .nav-dropdown {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .nav-dropdown__item {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .nav-dropdown__item:hover {
+      color: #fff;
+    }
+
+    /* ── MAIN CONTENT ──────────────────────────────────────────── */
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr 340px;
+      gap: 48px;
+      flex: 1;
+      align-items: start;
+    }
+
+    /* ── TEXT COLUMNS ──────────────────────────────────────────── */
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .col p {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 13px;
+      line-height: 1.75;
+    }
+    .col p.accent {
+      color: #AAD6F5;
+    }
+    .col .email {
+      margin-top: 16px;
+      color: #fff;
+      font-size: 13px;
+      text-decoration: none;
+      display: inline-block;
+      transition: opacity 0.2s ease;
+    }
+    .col .email:hover {
+      opacity: 0.65;
+    }
+
+    /* ── PHOTO ─────────────────────────────────────────────────── */
+    .photo-col {
+      position: relative;
+    }
+    .photo-placeholder {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.25);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    /* If a real image is dropped in, use this instead of the placeholder */
+    .photo-col img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ── FOOTER BAR ────────────────────────────────────────────── */
+    .footer {
+      margin-top: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer__text {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      line-height: 1.5;
+    }
+    /* ── SURF COAST TICKER ─────────────────────────────────────── */
+    .surf-ticker {
+      position: relative;
+      overflow: hidden;
+      height: 17px;
+    }
+    .surf-ticker__inner {
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .surf-ticker__item {
+      height: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    /* ── SCRAMBLE ──────────────────────────────────────────────── */
+    .scramble-char {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: 1fr 1fr;
+      }
+      .photo-col {
+        grid-column: 1 / -1;
+      }
+      .photo-placeholder {
+        aspect-ratio: 16 / 7;
+      }
+      .footer {
+        margin-top: 48px;
+      }
+    }
+    @media (max-width: 600px) {
+      .page {
+        padding: 28px 24px 32px;
+      }
+      .nav {
+        margin-bottom: 48px;
+      }
+      .content {
+        grid-template-columns: 1fr;
+      }
+      .photo-col {
+        grid-column: auto;
+      }
+      .photo-placeholder {
+        aspect-ratio: 3 / 4;
+      }
+      .footer {
+        margin-top: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Nav -->
+    <nav class="nav">
+      <a href="index.html" class="nav__logo" data-scramble>[THE LOCAL FOLK]</a>
+      <div class="nav-menu">
+        <span class="nav-menu__trigger" data-scramble>Menu</span>
+        <div class="nav-dropdown">
+          <a href="index.html" class="nav-dropdown__item" data-scramble>Home</a>
+          <a href="about.html" class="nav-dropdown__item" data-scramble>About</a>
+          <a href="services.html" class="nav-dropdown__item" data-scramble>Services</a>
+          <a href="mailto:eliza@thelocalfolk.com.au" class="nav-dropdown__item" data-scramble>Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="content">
+
+      <!-- Left column -->
+      <div class="col">
+        <p>A Shopify development studio offering custom builds, theme development &amp; technical strategy — led by founder Eliza Moodie.</p>
+        <p>Based on the Surf Coast, Victoria, we've built a reputation for creating beautiful, high-converting Shopify stores for fashion, lifestyle, and homewares brands across Australia and beyond.</p>
+        <p>We believe great e-commerce is equal parts craft and commerce. Every store we build is considered, intentional, and made to last.</p>
+        <a href="mailto:eliza@thelocalfolk.com.au" class="email" data-scramble>E. eliza@thelocalfolk.com.au</a>
+      </div>
+
+      <!-- Right column -->
+      <div class="col">
+        <p><span class="accent">We're Shopify &amp; Shopify Plus specialists</span> with experience across 50+ stores, with a specific focus on custom theme development, performance and conversion.</p>
+        <p>Paired with our commitment to considered design and clean code, we believe the best stores are built on trust and a genuine understanding of the brand behind them.</p>
+        <p>We work with founders who care about the details — because we do too.</p>
+      </div>
+
+      <!-- Photo -->
+      <div class="photo-col">
+        <!-- Swap the placeholder div below for an <img src="eliza.jpg" alt="Eliza Moodie"> when ready -->
+        <div class="photo-placeholder">Photo</div>
+      </div>
+
+    </div>
+
+    <!-- Footer bar -->
+    <footer class="footer">
+      <a href="https://instagram.com/thelocalfolkstudio" target="_blank" class="footer__text" data-scramble>IG. thelocalfolkstudio</a>
+      <div class="surf-ticker">
+        <div class="surf-ticker__inner" id="surfTicker">
+          <span class="surf-ticker__item">Creating On The Surf Coast, VIC © 2026</span>
+          <span class="surf-ticker__item" id="surfTime"></span>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // ── TEXT SCRAMBLE ───────────────────────────────────────────
+    class TextScramble {
+      constructor(el) {
+        this.el = el;
+        this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.[]@#';
+        this.update = this.update.bind(this);
+      }
+      setText(newText) {
+        const length = newText.length;
+        this.queue = [];
+        for (let i = 0; i < length; i++) {
+          const to = newText[i];
+          const start = Math.floor(Math.random() * 16);
+          const end = start + Math.floor(Math.random() * 18) + 14;
+          this.queue.push({ to, start, end, char: '' });
+        }
+        cancelAnimationFrame(this.frameRequest);
+        this.frame = 0;
+        this.update();
+      }
+      update() {
+        let output = '';
+        let complete = 0;
+        for (let i = 0; i < this.queue.length; i++) {
+          const { to, start, end } = this.queue[i];
+          if (this.frame >= end) {
+            complete++;
+            output += to;
+          } else if (this.frame >= start) {
+            if (Math.random() < 0.32) {
+              this.queue[i].char = to === ' ' ? ' ' : this.chars[Math.floor(Math.random() * this.chars.length)];
+            }
+            const c = this.queue[i].char || this.chars[Math.floor(Math.random() * this.chars.length)];
+            output += to === ' ' ? ' ' : `<span class="scramble-char">${c}</span>`;
+          } else {
+            output += to;
+          }
+        }
+        this.el.innerHTML = output;
+        if (complete < this.queue.length) {
+          this.frameRequest = requestAnimationFrame(this.update);
+          this.frame++;
+        }
+      }
+    }
+
+    document.querySelectorAll('[data-scramble]').forEach(el => {
+      const scrambler = new TextScramble(el);
+      const original = el.textContent;
+      el.addEventListener('mouseenter', () => scrambler.setText(original));
+      el.addEventListener('mouseleave', () => { el.textContent = original; });
+    });
+
+    // ── MENU CLICK TOGGLE ────────────────────────────────────────
+    document.querySelector('.nav-menu__trigger').addEventListener('click', function () {
+      this.closest('.nav-menu').classList.toggle('nav-menu--open');
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.nav-menu')) {
+        document.querySelectorAll('.nav-menu').forEach(m => m.classList.remove('nav-menu--open'));
+      }
+    });
+
+    // ── SURF COAST TIME TICKER ──────────────────────────────────
+    const ticker    = document.getElementById('surfTicker');
+    const timeEl    = document.getElementById('surfTime');
+    const ITEM_PX   = 17;
+    let showingTime = false;
+
+    function getSurfCoastTime() {
+      const now = new Date();
+      const day = now.toLocaleDateString('en-AU', { timeZone: 'Australia/Melbourne', weekday: 'short' });
+      const time = now.toLocaleTimeString('en-AU', {
+        timeZone: 'Australia/Melbourne',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }).replace(' am', 'am').replace(' pm', 'pm');
+      const tz = new Intl.DateTimeFormat('en-AU', {
+        timeZone: 'Australia/Melbourne',
+        timeZoneName: 'short'
+      }).formatToParts(now).find(p => p.type === 'timeZoneName').value;
+      return `${day} ${time} ${tz} © 2026`;
+    }
+
+    function rollTicker() {
+      showingTime = !showingTime;
+      if (showingTime) {
+        timeEl.textContent = getSurfCoastTime();
+        ticker.style.transform = `translateY(-${ITEM_PX}px)`;
+      } else {
+        ticker.style.transform = 'translateY(0)';
+      }
+    }
+
+    setInterval(rollTicker, 4000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Services — The Local Folk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: #3E361F;
+      color: #fff;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* ── PAGE WRAPPER ──────────────────────────────────────────── */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 32px 36px 36px;
+    }
+
+    /* ── NAV ───────────────────────────────────────────────────── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 80px;
+    }
+    .nav__logo {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 12px;
+      color: #fff;
+      letter-spacing: 0;
+      cursor: default;
+      text-decoration: none;
+    }
+    .nav-menu {
+      position: relative;
+    }
+    .nav-menu__trigger {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 13px;
+      color: #fff;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      display: block;
+      text-align: right;
+    }
+    .nav-dropdown {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-5px);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      text-align: right;
+    }
+    .nav-menu:hover .nav-dropdown,
+    .nav-menu--open .nav-dropdown {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .nav-dropdown__item {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .nav-dropdown__item:hover {
+      color: #fff;
+    }
+
+    /* ── INTRO ─────────────────────────────────────────────────── */
+    .intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 72px;
+    }
+    .intro__heading {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      color: #fff;
+      line-height: 1.05;
+    }
+    .intro__body {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 13px;
+      line-height: 1.75;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ── SERVICES LIST ─────────────────────────────────────────── */
+    .services {
+      flex: 1;
+    }
+    .service-item {
+      display: grid;
+      grid-template-columns: 48px 1fr 1fr;
+      gap: 24px 48px;
+      align-items: start;
+      padding: 28px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: default;
+      transition: border-color 0.2s ease;
+    }
+    .service-item:last-child {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .service-item:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .service-item__num {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+      letter-spacing: 0.04em;
+      padding-top: 4px;
+    }
+    .service-item__title {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      font-size: 14px;
+      color: #fff;
+      line-height: 1.2;
+      transition: color 0.2s ease;
+    }
+    .service-item:hover .service-item__title {
+      color: #AAD6F5;
+    }
+    .service-item__right {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-top: 4px;
+    }
+    .service-item__desc {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.75;
+    }
+    .service-item__tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .service-item__tag {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 999px;
+      padding: 3px 10px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── FOOTER BAR ────────────────────────────────────────────── */
+    .footer {
+      margin-top: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer__text {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      color: #fff;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      line-height: 1.5;
+    }
+
+    /* ── SURF COAST TICKER ─────────────────────────────────────── */
+    .surf-ticker {
+      position: relative;
+      overflow: hidden;
+      height: 17px;
+    }
+    .surf-ticker__inner {
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .surf-ticker__item {
+      height: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    /* ── SCRAMBLE ──────────────────────────────────────────────── */
+    .scramble-char {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .intro {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        margin-bottom: 48px;
+      }
+      .service-item {
+        grid-template-columns: 40px 1fr;
+        grid-template-rows: auto auto;
+      }
+      .service-item__right {
+        grid-column: 2;
+      }
+    }
+    @media (max-width: 600px) {
+      .page {
+        padding: 28px 24px 32px;
+      }
+      .nav {
+        margin-bottom: 48px;
+      }
+      .service-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .service-item__num {
+        display: none;
+      }
+      .footer {
+        margin-top: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Nav -->
+    <nav class="nav">
+      <a href="index.html" class="nav__logo" data-scramble>[THE LOCAL FOLK]</a>
+      <div class="nav-menu">
+        <span class="nav-menu__trigger" data-scramble>Menu</span>
+        <div class="nav-dropdown">
+          <a href="index.html" class="nav-dropdown__item" data-scramble>Home</a>
+          <a href="about.html" class="nav-dropdown__item" data-scramble>About</a>
+          <a href="services.html" class="nav-dropdown__item" data-scramble>Services</a>
+          <a href="mailto:eliza@thelocalfolk.com.au" class="nav-dropdown__item" data-scramble>Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Intro -->
+    <div class="intro">
+      <h1 class="intro__heading">What we<br>build.</h1>
+      <p class="intro__body">End-to-end Shopify development for brands that care about craft. From first brief to final launch — and everything in between.</p>
+    </div>
+
+    <!-- Services -->
+    <div class="services">
+
+      <div class="service-item">
+        <span class="service-item__num">01</span>
+        <h2 class="service-item__title">Custom Theme<br>Development</h2>
+        <div class="service-item__right">
+          <p class="service-item__desc">Bespoke Shopify themes built from the ground up. Designed to your brand, engineered for performance, and optimised for conversion. Every section, every interaction — made to order.</p>
+          <div class="service-item__tags">
+            <span class="service-item__tag">Liquid</span>
+            <span class="service-item__tag">JavaScript</span>
+            <span class="service-item__tag">CSS</span>
+            <span class="service-item__tag">Figma to Code</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-item">
+        <span class="service-item__num">02</span>
+        <h2 class="service-item__title">Theme<br>Customisation</h2>
+        <div class="service-item__right">
+          <p class="service-item__desc">Extending and adapting existing themes to fit your brand exactly. Schema updates, new sections, feature additions, and bug fixes — without breaking what's already working.</p>
+          <div class="service-item__tags">
+            <span class="service-item__tag">Prestige</span>
+            <span class="service-item__tag">Broadcast</span>
+            <span class="service-item__tag">Dawn</span>
+            <span class="service-item__tag">Impulse</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-item">
+        <span class="service-item__num">03</span>
+        <h2 class="service-item__title">Shopify Plus</h2>
+        <div class="service-item__right">
+          <p class="service-item__desc">Enterprise-level builds for brands ready to scale. Advanced checkout customisation, B2B and wholesale portals, multi-store setups, and Launchpad automations.</p>
+          <div class="service-item__tags">
+            <span class="service-item__tag">Checkout Extensibility</span>
+            <span class="service-item__tag">B2B</span>
+            <span class="service-item__tag">Wholesale</span>
+            <span class="service-item__tag">Multi-store</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-item">
+        <span class="service-item__num">04</span>
+        <h2 class="service-item__title">Store<br>Migration</h2>
+        <div class="service-item__right">
+          <p class="service-item__desc">Moving your store to Shopify with zero data loss and minimal disruption. Products, customers, orders, and SEO — all transferred cleanly. We've done it from WooCommerce, BigCommerce, Squarespace, and more.</p>
+          <div class="service-item__tags">
+            <span class="service-item__tag">WooCommerce</span>
+            <span class="service-item__tag">BigCommerce</span>
+            <span class="service-item__tag">Squarespace</span>
+            <span class="service-item__tag">Data Migration</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-item">
+        <span class="service-item__num">05</span>
+        <h2 class="service-item__title">Performance<br>&amp; CRO</h2>
+        <div class="service-item__right">
+          <p class="service-item__desc">Speed optimisation, Core Web Vitals improvements, and conversion rate work for existing stores. We find what's slowing you down — technically and commercially — and fix it.</p>
+          <div class="service-item__tags">
+            <span class="service-item__tag">Core Web Vitals</span>
+            <span class="service-item__tag">Page Speed</span>
+            <span class="service-item__tag">CRO</span>
+            <span class="service-item__tag">Analytics</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-item">
+        <span class="service-item__num">06</span>
+        <h2 class="service-item__title">Ongoing<br>Support</h2>
+        <div class="service-item__right">
+          <p class="service-item__desc">Monthly retainers for brands that want a reliable Shopify developer on call. Updates, new features, seasonal changes, and technical fixes — handled quickly, without the back-and-forth of a new project every time.</p>
+          <div class="service-item__tags">
+            <span class="service-item__tag">Retainer</span>
+            <span class="service-item__tag">Priority Support</span>
+            <span class="service-item__tag">Monthly</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer bar -->
+    <footer class="footer">
+      <a href="https://instagram.com/thelocalfolkstudio" target="_blank" class="footer__text" data-scramble>IG. thelocalfolkstudio</a>
+      <div class="surf-ticker">
+        <div class="surf-ticker__inner" id="surfTicker">
+          <span class="surf-ticker__item">Creating On The Surf Coast, VIC © 2026</span>
+          <span class="surf-ticker__item" id="surfTime"></span>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // ── TEXT SCRAMBLE ───────────────────────────────────────────
+    class TextScramble {
+      constructor(el) {
+        this.el = el;
+        this.chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.[]@#';
+        this.update = this.update.bind(this);
+      }
+      setText(newText) {
+        const length = newText.length;
+        this.queue = [];
+        for (let i = 0; i < length; i++) {
+          const to = newText[i];
+          const start = Math.floor(Math.random() * 16);
+          const end = start + Math.floor(Math.random() * 18) + 14;
+          this.queue.push({ to, start, end, char: '' });
+        }
+        cancelAnimationFrame(this.frameRequest);
+        this.frame = 0;
+        this.update();
+      }
+      update() {
+        let output = '';
+        let complete = 0;
+        for (let i = 0; i < this.queue.length; i++) {
+          const { to, start, end } = this.queue[i];
+          if (this.frame >= end) {
+            complete++;
+            output += to;
+          } else if (this.frame >= start) {
+            if (Math.random() < 0.32) {
+              this.queue[i].char = to === ' ' ? ' ' : this.chars[Math.floor(Math.random() * this.chars.length)];
+            }
+            const c = this.queue[i].char || this.chars[Math.floor(Math.random() * this.chars.length)];
+            output += to === ' ' ? ' ' : `<span class="scramble-char">${c}</span>`;
+          } else {
+            output += to;
+          }
+        }
+        this.el.innerHTML = output;
+        if (complete < this.queue.length) {
+          this.frameRequest = requestAnimationFrame(this.update);
+          this.frame++;
+        }
+      }
+    }
+
+    document.querySelectorAll('[data-scramble]').forEach(el => {
+      const scrambler = new TextScramble(el);
+      const original = el.textContent;
+      el.addEventListener('mouseenter', () => scrambler.setText(original));
+      el.addEventListener('mouseleave', () => { el.textContent = original; });
+    });
+
+    // ── MENU CLICK TOGGLE ────────────────────────────────────────
+    document.querySelector('.nav-menu__trigger').addEventListener('click', function () {
+      this.closest('.nav-menu').classList.toggle('nav-menu--open');
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.nav-menu')) {
+        document.querySelectorAll('.nav-menu').forEach(m => m.classList.remove('nav-menu--open'));
+      }
+    });
+
+    // ── SURF COAST TIME TICKER ──────────────────────────────────
+    const ticker    = document.getElementById('surfTicker');
+    const timeEl    = document.getElementById('surfTime');
+    const ITEM_PX   = 17;
+    let showingTime = false;
+
+    function getSurfCoastTime() {
+      const now = new Date();
+      const day = now.toLocaleDateString('en-AU', { timeZone: 'Australia/Melbourne', weekday: 'short' });
+      const time = now.toLocaleTimeString('en-AU', {
+        timeZone: 'Australia/Melbourne',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }).replace(' am', 'am').replace(' pm', 'pm');
+      const tz = new Intl.DateTimeFormat('en-AU', {
+        timeZone: 'Australia/Melbourne',
+        timeZoneName: 'short'
+      }).formatToParts(now).find(p => p.type === 'timeZoneName').value;
+      return `${day} ${time} ${tz} © 2026`;
+    }
+
+    function rollTicker() {
+      showingTime = !showingTime;
+      if (showingTime) {
+        timeEl.textContent = getSurfCoastTime();
+        ticker.style.transform = `translateY(-${ITEM_PX}px)`;
+      } else {
+        ticker.style.transform = 'translateY(0)';
+      }
+    }
+
+    setInterval(rollTicker, 4000);
+  </script>
+</body>
+</html>
