@@ -168,9 +168,6 @@
       position: relative;
       cursor: default;
     }
-    .right:hover .scroll-track {
-      animation-play-state: paused;
-    }
     .scroll-viewport {
       height: 100%;
       overflow: hidden;
@@ -179,15 +176,12 @@
     .scroll-track {
       display: flex;
       flex-direction: column;
-      animation: scrollUp 40s linear infinite;
-    }
-    @keyframes scrollUp {
-      from { transform: translateY(0); }
-      to   { transform: translateY(-50%); }
+      will-change: transform;
     }
     @media (prefers-reduced-motion: reduce) {
       .scroll-track {
-        animation: none;
+        /* no animation — JS won't run auto-scroll either */
+        opacity: 1;
       }
     }
     .client-item {
@@ -449,6 +443,62 @@
 
     // Kick off — alternate every 4 seconds
     setInterval(rollTicker, 4000);
+
+    // ── JS-DRIVEN SCROLL (auto + manual drag) ────────────────────
+    const scrollEl  = document.querySelector('.scroll-track');
+    const rightPanel = document.querySelector('.right');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let pos         = 0;       // current scroll position in px
+    let paused      = false;   // true when hover or mid-drag
+    let resumeTimer = null;
+
+    // Speed to match ~40s for one full loop
+    function speed() {
+      return scrollEl.scrollHeight / 2 / (40 * 60);
+    }
+
+    function applyPos() {
+      const half = scrollEl.scrollHeight / 2;
+      if (pos < 0)    pos += half;
+      if (pos >= half) pos -= half;
+      scrollEl.style.transform = `translateY(-${pos}px)`;
+    }
+
+    if (!reducedMotion) {
+      (function tick() {
+        if (!paused) {
+          pos += speed();
+          applyPos();
+        }
+        requestAnimationFrame(tick);
+      })();
+    }
+
+    // ── HOVER PAUSE (desktop) ─────────────────────────────────────
+    rightPanel.addEventListener('mouseenter', () => { paused = true;  });
+    rightPanel.addEventListener('mouseleave', () => { paused = false; });
+
+    // ── TOUCH DRAG + AUTO-RESUME (mobile) ─────────────────────────
+    let touchLastY = 0;
+
+    rightPanel.addEventListener('touchstart', (e) => {
+      clearTimeout(resumeTimer);
+      paused     = true;
+      touchLastY = e.touches[0].clientY;
+    }, { passive: true });
+
+    rightPanel.addEventListener('touchmove', (e) => {
+      const y     = e.touches[0].clientY;
+      const delta = touchLastY - y;   // drag up = positive = scroll down
+      pos        += delta;
+      applyPos();
+      touchLastY  = y;
+    }, { passive: true });
+
+    rightPanel.addEventListener('touchend', () => {
+      resumeTimer = setTimeout(() => { paused = false; }, 2500);
+    });
   </script>
 </body>
 </html>
