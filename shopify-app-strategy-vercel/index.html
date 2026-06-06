@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopify App Strategy</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f4f1;
+      --card: #ffffff;
+      --border: #e3e2de;
+      --text: #1a1a18;
+      --muted: #72726e;
+      --accent: #1a1a18;
+      --accent-hover: #3a3a38;
+      --radius: 14px;
+      --radius-sm: 9px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.07);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 28px 18px 60px;
+      line-height: 1.5;
+    }
+    .container { max-width: 660px; margin: 0 auto; }
+
+    .header { margin-bottom: 26px; }
+    .header-meta { font-size: 11px; font-weight: 600; letter-spacing: 0.9px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+    .header p { color: var(--muted); font-size: 13px; margin-top: 5px; }
+
+    .progress { display: flex; gap: 5px; margin-bottom: 22px; }
+    .progress-pip { flex: 1; height: 3px; background: var(--border); border-radius: 99px; transition: background 0.3s ease; }
+    .progress-pip.active { background: var(--accent); }
+
+    .step-counter { font-size: 11px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+    .step-title { font-size: 17px; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.2px; }
+    .step-hint { font-size: 12px; color: var(--muted); margin-top: -14px; margin-bottom: 18px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+    .field > label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+    .field input[type="text"], .field textarea, .field select {
+      width: 100%;
+      padding: 10px 13px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--card);
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+    .field input[type="text"]:focus, .field textarea:focus, .field select:focus { border-color: var(--accent); }
+    .field textarea { resize: vertical; min-height: 76px; }
+
+    .pills { display: flex; flex-wrap: wrap; gap: 7px; }
+    .pill input { display: none; }
+    .pill span {
+      display: inline-block;
+      padding: 7px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.13s;
+      color: var(--text);
+      background: var(--card);
+    }
+    .pill input:checked + span { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .pill span:hover { border-color: var(--accent); }
+
+    .toggles { display: flex; flex-direction: column; }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-row:first-child { padding-top: 0; }
+    .toggle-label { font-size: 13px; flex: 1; }
+    .toggle-wrap { position: relative; width: 42px; height: 23px; flex-shrink: 0; }
+    .toggle-wrap input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 99px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 17px; height: 17px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px; left: 3px;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+    }
+    .toggle-wrap input:checked + .toggle-track { background: var(--accent); }
+    .toggle-wrap input:checked + .toggle-track::after { transform: translateX(19px); }
+
+    .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+    .btn {
+      padding: 9px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      font-family: inherit;
+      transition: all 0.13s;
+      line-height: 1;
+    }
+    .btn-ghost { background: transparent; border-color: var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-sm { padding: 7px 14px; font-size: 12px; }
+
+    .loading-wrap { padding: 52px 0; text-align: center; }
+    .spinner {
+      width: 28px; height: 28px;
+      border: 2.5px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.75s linear infinite;
+      margin: 0 auto 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-wrap p { font-size: 13px; color: var(--muted); }
+
+    .results-topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
+    .results-topbar h2 { font-size: 16px; font-weight: 700; flex: 1; }
+    .results-topbar-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+    .md-body { font-size: 13.5px; line-height: 1.7; }
+    .md-body h2 { font-size: 14px; font-weight: 700; margin: 22px 0 10px; padding-bottom: 7px; border-bottom: 1.5px solid var(--border); letter-spacing: -0.1px; }
+    .md-body h2:first-child { margin-top: 0; }
+    .md-body h3 { font-size: 13.5px; font-weight: 700; margin: 16px 0 6px; }
+    .md-body p { margin-bottom: 9px; }
+    .md-body p:last-child { margin-bottom: 0; }
+    .md-body ul, .md-body ol { padding-left: 18px; margin-bottom: 10px; }
+    .md-body li { margin-bottom: 5px; }
+    .md-body strong { font-weight: 700; }
+    .md-body em { font-style: italic; }
+    .md-body code { font-family: monospace; font-size: 12px; background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+
+    .error-msg { background: #fff0f0; border: 1px solid #ffd0d0; color: #c0392b; border-radius: var(--radius-sm); padding: 12px 16px; font-size: 13px; margin-top: 12px; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="header-meta">Shopify Agency Tool</div>
+    <h1>Shopify App Strategy</h1>
+    <p>Complete the intake to generate a tailored app &amp; tech stack recommendation</p>
+  </div>
+
+  <div class="progress" id="progressBar">
+    <div class="progress-pip" id="pip1"></div>
+    <div class="progress-pip" id="pip2"></div>
+    <div class="progress-pip" id="pip3"></div>
+    <div class="progress-pip" id="pip4"></div>
+    <div class="progress-pip" id="pip5"></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div id="step1" class="step-content">
+    <div class="card">
+      <div class="step-counter">Step 1 of 5</div>
+      <div class="step-title">Client Overview</div>
+      <div class="field">
+        <label>Business / Client Name</label>
+        <input type="text" id="businessName" placeholder="e.g. Bondi Botanicals">
+      </div>
+      <div class="field">
+        <label>Industry / Niche</label>
+        <input type="text" id="industry" placeholder="e.g. Skincare, Homewares, Fashion, Food &amp; Beverage">
+      </div>
+      <div class="field">
+        <label>Who are they selling to?</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="bizType" value="B2C (direct to consumer)"><span>B2C</span></label>
+          <label class="pill"><input type="radio" name="bizType" value="B2B (business to business)"><span>B2B</span></label>
+          <label class="pill"><input type="radio" name="bizType" value="Both B2C and B2B"><span>Both B2C &amp; B2B</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Store stage</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="stage" value="New store launching from scratch"><span>New store</span></label>
+          <label class="pill"><input type="radio" name="stage" value="Migrating from another platform (WooCommerce, Squarespace, etc.)"><span>Platform migration</span></label>
+          <label class="pill"><input type="radio" name="stage" value="Existing Shopify store — scaling or redesigning"><span>Existing Shopify (scaling)</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Monthly revenue (current or target)</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="revenue" value="Pre-revenue / just starting out"><span>Pre-revenue</span></label>
+          <label class="pill"><input type="radio" name="revenue" value="Under $20k/month"><span>&lt; $20k</span></label>
+          <label class="pill"><input type="radio" name="revenue" value="$20k–$100k/month"><span>$20k–$100k</span></label>
+          <label class="pill"><input type="radio" name="revenue" value="$100k–$500k/month"><span>$100k–$500k</span></label>
+          <label class="pill"><input type="radio" name="revenue" value="$500k+/month"><span>$500k+</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="goTo(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" class="step-content hidden">
+    <div class="card">
+      <div class="step-counter">Step 2 of 5</div>
+      <div class="step-title">Products &amp; Catalogue</div>
+      <div class="field">
+        <label>Product type(s) — select all that apply</label>
+        <div class="pills">
+          <label class="pill"><input type="checkbox" name="productType" value="Physical products"><span>Physical products</span></label>
+          <label class="pill"><input type="checkbox" name="productType" value="Digital downloads"><span>Digital downloads</span></label>
+          <label class="pill"><input type="checkbox" name="productType" value="Made-to-order / custom products"><span>Made-to-order / custom</span></label>
+          <label class="pill"><input type="checkbox" name="productType" value="Food, beverages, or perishables"><span>Food &amp; perishables</span></label>
+          <label class="pill"><input type="checkbox" name="productType" value="Services or bookings"><span>Services / bookings</span></label>
+          <label class="pill"><input type="checkbox" name="productType" value="Subscription or replenishment products"><span>Subscriptions</span></label>
+          <label class="pill"><input type="checkbox" name="productType" value="Gift cards or vouchers"><span>Gift cards</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Approximate number of SKUs</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="skuCount" value="1–20 SKUs"><span>1–20</span></label>
+          <label class="pill"><input type="radio" name="skuCount" value="20–100 SKUs"><span>20–100</span></label>
+          <label class="pill"><input type="radio" name="skuCount" value="100–500 SKUs"><span>100–500</span></label>
+          <label class="pill"><input type="radio" name="skuCount" value="500+ SKUs"><span>500+</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Average order value (AUD)</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="aov" value="Under $50"><span>&lt; $50</span></label>
+          <label class="pill"><input type="radio" name="aov" value="$50–$150"><span>$50–$150</span></label>
+          <label class="pill"><input type="radio" name="aov" value="$150–$500"><span>$150–$500</span></label>
+          <label class="pill"><input type="radio" name="aov" value="$500+"><span>$500+</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Inventory management</label>
+        <div class="pills">
+          <label class="pill"><input type="radio" name="inventory" value="Simple — single location, self-managed"><span>Simple (single location)</span></label>
+          <label class="pill"><input type="radio" name="inventory" value="Multiple warehouse locations"><span>Multiple locations</span></label>
+          <label class="pill"><input type="radio" name="inventory" value="Dropshipping"><span>Dropshipping</span></label>
+          <label class="pill"><input type="radio" name="inventory" value="Third-party logistics (3PL) or fulfilment partner"><span>3PL / fulfilment</span></label>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step3" class="step-content hidden">
+    <div class="card">
+      <div class="step-counter">Step 3 of 5</div>
+      <div class="step-title">Business Goals &amp; Growth</div>
+      <p class="step-hint">Select everything relevant — this shapes the app recommendations most</p>
+      <div class="pills">
+        <label class="pill"><input type="checkbox" name="goal" value="Increase average order value (AOV)"><span>Increase AOV</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Improve conversion rate"><span>Improve conversion</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Build customer loyalty and repeat purchases"><span>Customer loyalty</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Launch subscriptions or recurring revenue"><span>Subscriptions</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Sell wholesale or B2B"><span>Wholesale / B2B</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Expand internationally"><span>International expansion</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Reduce cart abandonment"><span>Reduce cart abandonment</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Upsell and cross-sell"><span>Upsell &amp; cross-sell</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Product bundling"><span>Product bundling</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Grow email and SMS marketing list"><span>Grow email / SMS</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Collect reviews and user-generated content"><span>Reviews &amp; UGC</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Launch affiliate or referral program"><span>Affiliate / referral</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Improve post-purchase experience"><span>Post-purchase</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Improve site search and product discovery"><span>Search &amp; discovery</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Streamline operations and automate workflows"><span>Ops &amp; automation</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Drive traffic via SEO"><span>SEO</span></label>
+        <label class="pill"><input type="checkbox" name="goal" value="Sell on marketplaces (Amazon, Catch, etc.)"><span>Marketplace selling</span></label>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div id="step4" class="step-content hidden">
+    <div class="card">
+      <div class="step-counter">Step 4 of 5</div>
+      <div class="step-title">Customer Experience &amp; Features</div>
+      <div class="toggles">
+        <div class="toggle-row">
+          <span class="toggle-label">Products need customisation options (engraving, colours, text, sizing)</span>
+          <label class="toggle-wrap"><input type="checkbox" id="tog_customisation"><div class="toggle-track"></div></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Size guide, fit quiz, or product recommendation tool</span>
+          <label class="toggle-wrap"><input type="checkbox" id="tog_sizeguide"><div class="toggle-track"></div></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Customer reviews and / or UGC (photos, video) important</span>
+          <label class="toggle-wrap"><input type="checkbox" id="tog_reviews"><div class="toggle-track"></div></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Loyalty / rewards program (points, tiers, VIP perks)</span>
+          <label class="toggle-wrap"><input type="checkbox" id="tog_loyalty"><div class="toggle-track"></div></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">In-store / POS sales (bricks &amp; mortar, markets, pop-up)</span>
+          <label class="toggle-wrap"><input type="checkbox" id="tog_pos"><div class="toggle-track"></div></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Selling internationally or need multi-currency checkout</span>
+          <label class="toggle-wrap"><input type="checkbox" id="tog_international"><div class="toggle-track"></div></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Wishlist / save for later functionality</span>
+          <label class="toggle-wrap"><input type="checkbox" id="tog_wishlist"><div class="toggle-track"></div></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Back-in-stock or pre-order functionality</span>
+          <label class="toggle-wrap"><input type="checkbox" id="tog_backstock"><div class="toggle-track"></div></label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">AR / 3D product visualisation</span>
+          <label class="toggle-wrap"><input type="checkbox" id="tog_ar"><div class="toggle-track"></div></label>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goTo(3)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(5)">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div id="step5" class="step-content hidden">
+    <div class="card">
+      <div class="step-counter">Step 5 of 5</div>
+      <div class="step-title">Technical &amp; Additional Notes</div>
+      <div class="field">
+        <label>Existing platforms or software to integrate with</label>
+        <input type="text" id="integrations" placeholder="e.g. Xero, Cin7, Dear, Klaviyo, Gorgias…">
+      </div>
+      <div class="field">
+        <label>Wholesale / B2B requirements</label>
+        <input type="text" id="wholesale" placeholder="e.g. Trade pricing, wholesale portal, minimum order quantities">
+      </div>
+      <div class="field">
+        <label>Marketing channels they're using or planning</label>
+        <div class="pills">
+          <label class="pill"><input type="checkbox" name="marketing" value="Meta Ads (Facebook / Instagram)"><span>Meta Ads</span></label>
+          <label class="pill"><input type="checkbox" name="marketing" value="Google Ads"><span>Google Ads</span></label>
+          <label class="pill"><input type="checkbox" name="marketing" value="Email marketing"><span>Email</span></label>
+          <label class="pill"><input type="checkbox" name="marketing" value="SMS marketing"><span>SMS</span></label>
+          <label class="pill"><input type="checkbox" name="marketing" value="TikTok / TikTok Shop"><span>TikTok</span></label>
+          <label class="pill"><input type="checkbox" name="marketing" value="Influencer or affiliate marketing"><span>Influencer / affiliate</span></label>
+          <label class="pill"><input type="checkbox" name="marketing" value="Organic social media"><span>Organic social</span></label>
+          <label class="pill"><input type="checkbox" name="marketing" value="SEO and content marketing"><span>SEO / content</span></label>
+          <label class="pill"><input type="checkbox" name="marketing" value="Marketplaces (Amazon, Catch, etc.)"><span>Marketplaces</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Anything else to factor in?</label>
+        <textarea id="notes" placeholder="Specific features, pain points with previous store, budget constraints, client expectations…"></textarea>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-ghost" onclick="goTo(4)">← Back</button>
+      <button class="btn btn-primary" onclick="generate()">Generate Strategy ✦</button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loadingState" class="card hidden">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <p>Analysing requirements and building app strategy…</p>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="resultsState" class="hidden">
+    <div class="card">
+      <div class="results-topbar">
+        <h2 id="resultsTitle">App Strategy</h2>
+        <div class="results-topbar-actions">
+          <button class="btn btn-ghost btn-sm" onclick="copyResult()">Copy text</button>
+          <button class="btn btn-ghost btn-sm" onclick="reset()">New intake</button>
+        </div>
+      </div>
+      <div class="md-body" id="resultsBody"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let currentStep = 1;
+
+  function updateProgress() {
+    for (let i = 1; i <= 5; i++) {
+      const pip = document.getElementById('pip' + i);
+      pip.className = 'progress-pip' + (i <= currentStep ? ' active' : '');
+    }
+  }
+
+  function goTo(n) {
+    document.getElementById('step' + currentStep).classList.add('hidden');
+    document.getElementById('step' + n).classList.remove('hidden');
+    currentStep = n;
+    updateProgress();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function getRadio(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : 'Not specified';
+  }
+
+  function getChecked(name) {
+    return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(el => el.value);
+  }
+
+  function tog(id) {
+    return document.getElementById(id).checked ? 'Yes' : 'No';
+  }
+
+  function buildPrompt(d) {
+    return `You are a senior Shopify solutions architect at a boutique Australian Shopify agency.
+
+Based on the following client onboarding information, produce a comprehensive Shopify App & Functionality Strategy. This will be used to accurately quote the build and present a technical strategy to the client.
+
+---
+CLIENT OVERVIEW
+Business: ${d.businessName || 'Not provided'}
+Industry: ${d.industry || 'Not provided'}
+Customer Type: ${d.bizType}
+Store Stage: ${d.stage}
+Monthly Revenue Target: ${d.revenue}
+
+PRODUCTS & CATALOGUE
+Product Types: ${d.productTypes.length ? d.productTypes.join('; ') : 'Not specified'}
+SKU Count: ${d.skuCount}
+Average Order Value: ${d.aov}
+Inventory: ${d.inventory}
+
+BUSINESS GOALS
+${d.goals.length ? d.goals.map(g => '• ' + g).join('\n') : 'None specified'}
+
+CUSTOMER EXPERIENCE REQUIREMENTS
+Product customisation options: ${d.customisation}
+Size guide / fit quiz: ${d.sizeguide}
+Reviews & UGC: ${d.reviews}
+Loyalty / rewards program: ${d.loyalty}
+In-store / POS: ${d.pos}
+International / multi-currency: ${d.international}
+Wishlist: ${d.wishlist}
+Back-in-stock / pre-order: ${d.backstock}
+AR / 3D visualisation: ${d.ar}
+
+TECHNICAL & OPERATIONS
+Existing integrations: ${d.integrations || 'None mentioned'}
+Wholesale / B2B needs: ${d.wholesale || 'None mentioned'}
+Marketing channels: ${d.marketing.length ? d.marketing.join(', ') : 'Not specified'}
+Additional notes: ${d.notes || 'None'}
+---
+
+Structure your response with these exact sections:
+
+## 🚀 Essential Apps — Launch Critical
+Apps the store cannot launch without. For each: **App Name** — purpose, why essential for this client, estimated monthly cost in AUD.
+
+## ⭐ Recommended Apps — High ROI
+Apps with strong ROI to include at launch or shortly after. Same format.
+
+## 🔮 Phase 2 — Post-Launch
+Apps to introduce once live and generating revenue. Note the trigger for adding each.
+
+## ⚠️ Custom Development Flags
+Requirements that can't be solved with an off-the-shelf app. Flag complexity as [Low], [Medium], or [High].
+
+## 💰 Estimated Monthly App Investment
+Monthly cost breakdown: Essential only | Essential + Recommended | Full stack. Ranges in AUD.
+
+## 📋 Quoting Notes
+Key things to factor into the development quote — integration complexity, custom dev effort, scope creep risks.
+
+Be specific and tailored to this client. Use well-supported apps from the Shopify App Store that work well for Australian merchants. Where there's a best-in-class option, name it. Where there's a budget vs premium trade-off, note both.`;
+  }
+
+  function renderMarkdown(text) {
+    const lines = String(text).split('\n');
+    const out = [];
+    let inUl = false;
+    let pendingP = [];
+
+    function closeLists() { if (inUl) { out.push('</ul>'); inUl = false; } }
+    function flushP() { if (pendingP.length) { out.push('<p>' + pendingP.join('<br>') + '</p>'); pendingP = []; } }
+    function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function inline(s) {
+      return esc(s)
+        .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g,'<em>$1</em>')
+        .replace(/`(.+?)`/g,'<code>$1</code>');
+    }
+
+    for (let raw of lines) {
+      const line = raw.trimEnd();
+      if (line.startsWith('## ')) {
+        flushP(); closeLists();
+        out.push('<h2>' + inline(line.slice(3)) + '</h2>');
+      } else if (line.startsWith('### ')) {
+        flushP(); closeLists();
+        out.push('<h3>' + inline(line.slice(4)) + '</h3>');
+      } else if (/^[-*] /.test(line)) {
+        flushP();
+        if (!inUl) { out.push('<ul>'); inUl = true; }
+        out.push('<li>' + inline(line.slice(2)) + '</li>');
+      } else if (line.trim() === '') {
+        flushP(); closeLists();
+      } else {
+        closeLists();
+        pendingP.push(inline(line));
+      }
+    }
+    flushP(); closeLists();
+    return out.join('\n');
+  }
+
+  async function generate() {
+    const d = {
+      businessName:  document.getElementById('businessName').value.trim(),
+      industry:      document.getElementById('industry').value.trim(),
+      bizType:       getRadio('bizType'),
+      stage:         getRadio('stage'),
+      revenue:       getRadio('revenue'),
+      productTypes:  getChecked('productType'),
+      skuCount:      getRadio('skuCount'),
+      aov:           getRadio('aov'),
+      inventory:     getRadio('inventory'),
+      goals:         getChecked('goal'),
+      customisation: tog('tog_customisation'),
+      sizeguide:     tog('tog_sizeguide'),
+      reviews:       tog('tog_reviews'),
+      loyalty:       tog('tog_loyalty'),
+      pos:           tog('tog_pos'),
+      international: tog('tog_international'),
+      wishlist:      tog('tog_wishlist'),
+      backstock:     tog('tog_backstock'),
+      ar:            tog('tog_ar'),
+      integrations:  document.getElementById('integrations').value.trim(),
+      wholesale:     document.getElementById('wholesale').value.trim(),
+      marketing:     getChecked('marketing'),
+      notes:         document.getElementById('notes').value.trim(),
+    };
+
+    document.getElementById('step5').classList.add('hidden');
+    document.getElementById('loadingState').classList.remove('hidden');
+
+    try {
+      const res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: buildPrompt(d) }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || data.error) {
+        throw new Error(data.error || 'API error');
+      }
+
+      document.getElementById('loadingState').classList.add('hidden');
+      const title = d.businessName ? d.businessName + ' — App Strategy' : 'App Strategy';
+      document.getElementById('resultsTitle').textContent = title;
+      document.getElementById('resultsBody').innerHTML = renderMarkdown(data.text);
+      document.getElementById('resultsState').classList.remove('hidden');
+
+    } catch (err) {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('step5').classList.remove('hidden');
+      const errDiv = document.createElement('div');
+      errDiv.className = 'error-msg';
+      errDiv.textContent = 'Error: ' + (err.message || 'Something went wrong. Please try again.');
+      document.querySelector('#step5 .card').appendChild(errDiv);
+      setTimeout(() => errDiv.remove(), 6000);
+    }
+  }
+
+  function copyResult() {
+    const text = document.getElementById('resultsBody').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = event.target;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy text', 2000);
+    });
+  }
+
+  function reset() {
+    document.getElementById('resultsState').classList.add('hidden');
+    document.querySelectorAll('input[type=text], textarea').forEach(el => el.value = '');
+    document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(el => el.checked = false);
+    goTo(1);
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>

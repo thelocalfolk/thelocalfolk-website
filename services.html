@@ -116,6 +116,25 @@
       align-items: center;
     }
 
+    /* ── SECTION LABEL ────────────────────────────────────────── */
+    .section-label {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight: 400;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding-bottom: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 32px;
+      margin-top: 48px;
+    }
+    .section-label:first-child {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+
     /* ── SERVICES LIST ─────────────────────────────────────────── */
     .services {
       flex: 1;
@@ -176,6 +195,10 @@
       border-radius: 999px;
       padding: 3px 10px;
       letter-spacing: 0.03em;
+    }
+    .service-item__tag--soon {
+      color: #AAD6F5;
+      border-color: rgba(170, 214, 245, 0.35);
     }
 
     /* ── FOOTER BAR ────────────────────────────────────────────── */
@@ -278,11 +301,13 @@
     <!-- Intro -->
     <div class="intro">
       <h1 class="intro__heading">What we<br>build.</h1>
-      <p class="intro__body">End-to-end Shopify development for brands that care about craft. From first brief to final launch — and everything in between.</p>
+      <p class="intro__body">Shopify development maximised with AI, and commerce systems built to automate and scale. From first brief to full operation — and everything in between.</p>
     </div>
 
     <!-- Services -->
     <div class="services">
+
+      <p class="section-label">Shopify Development</p>
 
       <div class="service-item">
         <span class="service-item__num">01</span>
@@ -363,6 +388,35 @@
             <span class="service-item__tag">Retainer</span>
             <span class="service-item__tag">Priority Support</span>
             <span class="service-item__tag">Monthly</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="section-label">AI Commerce</p>
+
+      <div class="service-item">
+        <span class="service-item__num">07</span>
+        <h2 class="service-item__title">AI-Enhanced<br>Development</h2>
+        <div class="service-item__right">
+          <p class="service-item__desc">We use AI across every stage of our process — from scoping and strategy through to build, QA, and launch. The result is faster delivery, sharper decisions, and stores that are built to perform from day one.</p>
+          <div class="service-item__tags">
+            <span class="service-item__tag">Faster Delivery</span>
+            <span class="service-item__tag">AI-Assisted QA</span>
+            <span class="service-item__tag">Smarter Strategy</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="service-item">
+        <span class="service-item__num">08</span>
+        <h2 class="service-item__title">Commerce Systems<br>&amp; Automation</h2>
+        <div class="service-item__right">
+          <p class="service-item__desc">Custom AI systems for ecommerce operations. Automated workflows for inventory, customer service, order management, and beyond — built to reduce overhead and scale your operations intelligently. In development — reach out to be first in line.</p>
+          <div class="service-item__tags">
+            <span class="service-item__tag service-item__tag--soon">Coming Soon</span>
+            <span class="service-item__tag">Workflow Automation</span>
+            <span class="service-item__tag">AI Operations</span>
+            <span class="service-item__tag">Custom Systems</span>
           </div>
         </div>
       </div>
